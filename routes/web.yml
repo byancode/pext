@@ -1,0 +1,4 @@
+/: UserController@index
+/{user}:
+  get: UserController@show
+  post: UserController@update

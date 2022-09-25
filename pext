@@ -1,0 +1,56 @@
+#!/usr/bin/env php
+<?php
+
+spl_autoload_register(function($name) {
+    include_once __DIR__ . '/' . str_replace('\\', '/', $name) . '.php';
+});
+
+include __DIR__ . '/Pext/Html/Tags.php';
+
+
+$server = new Swoole\Http\Server("127.0.0.1", 9501);
+
+// Triggered when the HTTP Server starts, connections are accepted after this callback is executed
+$server->on("Start", function(Swoole\Http\Server $server)
+{
+    echo "Server started at http://127.0.0.1:9501" . PHP_EOL;
+});
+
+// The main HTTP server request callback event, entry point for all incoming HTTP requests
+$server->on('Request', function(Swoole\Http\Request $request, Swoole\Http\Response $response)
+{
+    $response->header("Content-Type", "text/html");
+    $response->end(Html(
+        head: Head(
+            title: 'Pext by Byancode',
+        ),
+        body: Body(
+            children: Div(
+                class: 'container',
+                children: [
+                    H1($request->server['request_uri'] ?? '/'),
+                    Div(),
+                    Div('Hello World 1'),
+                    Div('Hello World 2'),
+                    Div('Hello World 3'),
+                    Div('Hello World 4'),
+                ]
+            ),
+            style: 'background-color: red;',
+        ),
+    ));
+});
+
+// Triggered when the server is shutting down
+$server->on("Shutdown", function($server, $workerId)
+{
+    echo "Server is shutting down" . PHP_EOL;
+});
+
+// Triggered when worker processes are being stopped
+$server->on("WorkerStop", function($server, $workerId)
+{
+    echo "Worker $workerId is stopping" . PHP_EOL;
+});
+
+$server->start();
