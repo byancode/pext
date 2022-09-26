@@ -52,7 +52,7 @@ return new Layout(
                 }',
                 children: [
                     Div('Hello World 4', ondblclick: 'shown = !shown'),
-                    Div('Hello World 5', show: 'shown'),
+                    Div('Hello World 5', show: 'shown', click: 'once: sfgjhd()'),
                 ],
             ),
         ]),

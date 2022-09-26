@@ -17,6 +17,8 @@ function Element(
     null|string|array $class = [],
     null|string|array $style = [],
     array $attributes = [],
+
+    null|array $on = [],
 ): Node
 {
     $node = new Element(
@@ -24,6 +26,8 @@ function Element(
         class: $class,
         style: $style,
         attributes: $attributes,
+
+        on: $on,
     );
     return $node->setTag($tag);
 }
@@ -77,6 +81,8 @@ function Body(
     null|string|array $class = [],
     null|string|array $style = [],
     null|array $attributes = [],
+
+    null|array $on = [],
 ): Body
 {
     return new Body(
@@ -84,6 +90,8 @@ function Body(
         class: $class,
         style: $style,
         attributes: $attributes,
+
+        on: $on,
     );
 }
 
@@ -92,6 +100,8 @@ function Div(
     null|string|array $class = [],
     null|string|array $style = [],
     null|array $attributes = [],
+
+    null|array $on = [],
 ): Node
 {
     return new Div(
@@ -99,6 +109,8 @@ function Div(
         class: $class,
         style: $style,
         attributes: $attributes,
+
+        on: $on,
     );
 }
 
@@ -128,6 +140,8 @@ function Span(
     null|string|array $class = [],
     null|string|array $style = [],
     null|array $attributes = [],
+
+    null|array $on = [],
 ): Node
 {
     return new Span(
@@ -135,5 +149,7 @@ function Span(
         class: $class,
         style: $style,
         attributes: $attributes,
+
+        on: $on,
     );
 }

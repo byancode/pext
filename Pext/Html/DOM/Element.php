@@ -13,12 +13,27 @@ class Element extends Node
         protected null|string|array $class = [],
         protected null|string|array $style = [],
         protected null|array $attributes = [],
-    ) {}
+
+        protected null|array $on = [],
+    ) {
+        $this->on ??= [];
+        $this->children ??= [];
+        $this->attributes ??= [];
+
+        foreach ($this->on as $name => $value) {
+            $this->setEventToAttribute($name, $value);
+        }
+    }
 
     public function setTag(string $tag): static
     {
         $this->tag = $tag;
         return $this;
+    }
+
+    function setEventToAttribute(string $event, string $attribute): void
+    {
+        $this->attributes['@'.$event] = $attribute;
     }
 
     private function childToNode(mixed $child): Node {
@@ -73,7 +88,7 @@ class Element extends Node
         }
 
         $callback = fn($value, $key) => "$key: $value;";
-        return implode(' ', array_map($callback, $data, array_keys($data)));
+        return implode('', array_map($callback, $data, array_keys($data)));
     }
 
     private function attributesToString(string|array|null $data = null): string {
@@ -89,7 +104,10 @@ class Element extends Node
             $attrs = $this->attributes;
         } else {
             $keys = array_keys($data);
-            $callback = fn($value, $key) => "$key=\"$value\"";
+            $callback = function($value, $key) {
+                $value = htmlspecialchars($value);
+                return "$key=\"$value\"";
+            };
             $attrs = array_map($callback, $data, $keys);
         }
 
@@ -118,7 +136,6 @@ class Element extends Node
     public function __toString(): string
     {
         $children = $this->getChildren();
-        $children = array_map(fn($child) => (string) $child, $children);
         $children = implode('', $children);
 
         $attributes = $this->attributes ?? [];
