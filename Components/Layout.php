@@ -20,7 +20,9 @@ class Layout extends FutureComponent {
                         Div(text: 'Hello World ${user.name}'),
                     ]),
                     Div('Hello World 4'),
-                    Div('Click me', onClick: 'alert("Hello World")'),
+                    Div('Click me', on: [
+                        'click' => 'alert("Hello World")',
+                    ]),
                 ]),
                 style: [
                     'background-color' => 'red',

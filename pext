@@ -33,7 +33,7 @@ $server->on('Request', function(Swoole\Http\Request $request, Swoole\Http\Respon
                 children: [
                     Text($request->server['request_uri'] ?? '/'),
                     Div([2,3,4], style: [
-                        'color'   => 'white',
+                        'color'   => 'green',
                         'padding' => '2rem'
                     ]),
                     Div('Hello World 1'),

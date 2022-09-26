@@ -6,7 +6,7 @@ class UserController
 {
     public function index()
     {
-        return response()->json([
+        return response([
             'message' => 'Hello World',
         ]);
     }
