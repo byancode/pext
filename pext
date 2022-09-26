@@ -1,8 +1,6 @@
 #!/usr/bin/env php
 <?php
 
-use Pext\Html\Tags\Template;
-
 spl_autoload_register(function($name) {
     include_once __DIR__ . '/' . str_replace('\\', '/', $name) . '.php';
 });
@@ -35,7 +33,7 @@ $server->on('Request', function(Swoole\Http\Request $request, Swoole\Http\Respon
                 children: [
                     Text($request->server['request_uri'] ?? '/'),
                     Div([2,3,4], style: [
-                        'color' => 'white',
+                        'color'   => 'white',
                         'padding' => '2rem'
                     ]),
                     Div('Hello World 1'),
@@ -44,7 +42,7 @@ $server->on('Request', function(Swoole\Http\Request $request, Swoole\Http\Respon
                     Div('Hello World 4'),
                 ]
             ),
-            style: 'background-color: red;',
+            style: 'background-color: antiquewhite;',
         ),
     ));
 });

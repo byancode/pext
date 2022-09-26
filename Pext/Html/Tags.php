@@ -32,19 +32,20 @@ function Element(
     return $node->setTag($tag);
 }
 
-function Text(string $string): Node {
+function Text(string $string): Node
+{
     return new Text($string);
 }
 
 function Html(
     mixed $children = [],
-    array|Node $head = null,
-    array|Node $body = null,
+    array|Head $head = null,
+    array|Body $body = null,
     null|string|array $class = [],
     null|string|array $style = [],
     null|array $attributes = [],
 ): Html
-    {
+{
         $children ??= [];
         if (is_null($head) === false) {
             $children[] = $head;
@@ -102,7 +103,7 @@ function Div(
     null|array $attributes = [],
 
     null|array $on = [],
-): Node
+): Div
 {
     return new Div(
         $children,
@@ -119,7 +120,7 @@ function Template(
     null|string|array $class = [],
     null|string|array $style = [],
     null|array $attributes = [],
-): Node
+): Template
 {
     return new Template(
         $children,
@@ -129,12 +130,6 @@ function Template(
     );
 }
 
-/**
- * @param null|array<Node>|Node $children
- * @param null|string|array $class
- * @param null|string|array $style
- * @param array $attributes
- */
 function Span(
     mixed $children = [],
     null|string|array $class = [],
@@ -142,7 +137,7 @@ function Span(
     null|array $attributes = [],
 
     null|array $on = [],
-): Node
+): Span
 {
     return new Span(
         $children,
