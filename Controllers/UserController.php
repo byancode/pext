@@ -4,6 +4,10 @@ namespace Pext\Controllers;
 
 class UserController
 {
-    public function __construct(
-    ) {}
+    public function index()
+    {
+        return response()->json([
+            'message' => 'Hello World',
+        ]);
+    }
 }

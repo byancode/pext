@@ -1,8 +1,10 @@
 <?php
 
-namespace Pext\Html;
+namespace Pext\Html\Tags;
 
-class Text implements NodeInterface
+use Pext\Html\DOM\Node;
+
+class Text extends Node
 {
     public function __construct(
         public ?string $text,

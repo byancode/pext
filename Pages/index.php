@@ -1,6 +1,9 @@
 <?php
 
-return new Pext\Layouts\App(
+return new Layout(
+    head: Head(
+        title: 'Pext by Byancode',
+    ),
     drawer: Div(
         style: [
             'background-color' => 'red',
@@ -28,10 +31,9 @@ return new Pext\Layouts\App(
 
                     return [
                         $children,
-                        Div('Ver mas resultados', onclick: $snapshot->call('refresh')),
+                        Div('Ver mas resultados', onclick: 'nextPage()'),
                     ];
                 },
-                paginate: true,
                 loading: Div('Loading...'),
                 empty: Div('No hay resultados'),
             ),
@@ -54,8 +56,9 @@ return new Pext\Layouts\App(
                 ],
             ),
         ]),
-        style: [
-            'background-color' => 'red',
-        ],
+        style: '
+            background-color: red;
+            color: white;
+        ',
     ),
 );

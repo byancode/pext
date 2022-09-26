@@ -1,48 +1,54 @@
 <?php
 
-use Pext\Html\NodeInterface;
-use Pext\Html\Element;
-use Pext\Html\Text;
+use Pext\Html\DOM\Element;
+use Pext\Html\DOM\Node;
+use Pext\Html\Tags\Body;
+use Pext\Html\Tags\Div;
+use Pext\Html\Tags\Head;
+use Pext\Html\Tags\Html;
+use Pext\Html\Tags\Span;
+use Pext\Html\Tags\Template;
+use Pext\Html\Tags\Text;
+use Pext\Html\Tags\Title;
 
 function Element(
     string $tag,
-    null|string|array|NodeInterface $children = [],
+    mixed $children = [],
     null|string|array $class = [],
     null|string|array $style = [],
     array $attributes = [],
-): NodeInterface
+): Node
 {
-    return new Element(
-        $tag,
+    $node = new Element(
         $children,
         class: $class,
         style: $style,
         attributes: $attributes,
     );
+    return $node->setTag($tag);
 }
 
-function Text(string $string): NodeInterface {
+function Text(string $string): Node {
     return new Text($string);
 }
 
 function Html(
-    null|string|array|NodeInterface $children = [],
-    array|NodeInterface $head = null,
-    array|NodeInterface $body = null,
+    mixed $children = [],
+    array|Node $head = null,
+    array|Node $body = null,
     null|string|array $class = [],
     null|string|array $style = [],
-    array $attributes = [],
-): NodeInterface
-{
-    $children ??= [];
-    if (is_null($head) === false) {
-        $children[] = $head;
-    }
-    if (is_null($body) === false) {
-        $children[] = $body;
-    }
-    return new Element(
-        'html',
+    null|array $attributes = [],
+): Html
+    {
+        $children ??= [];
+        if (is_null($head) === false) {
+            $children[] = $head;
+        }
+        if (is_null($body) === false) {
+            $children[] = $body;
+        }
+    return new Html(
         $children,
         class: $class,
         style: $style,
@@ -50,39 +56,30 @@ function Html(
     );
 }
 
-function Title(string $title = 'Pext by Byancode'): NodeInterface
+function Title(?string $text): Node
 {
-    return new Element(
-        'title',
-        $title,
-    );
+    return new Title($text);
 }
 
 function Head(
-    string|NodeInterface $title = 'Pext by Byancode',
-    null|array|NodeInterface $children = [],
-    array $attributes = [],
-): NodeInterface
+    mixed $children = [],
+    null|array $attributes = [],
+): Node
 {
-    $children ??= [];
-    $children[] = Title($title);
-
-    return new Element(
-        'head',
+    return new Head(
         $children,
         attributes: $attributes,
     );
 }
 
 function Body(
-    null|string|array|NodeInterface $children = [],
+    mixed $children = [],
     null|string|array $class = [],
     null|string|array $style = [],
-    array $attributes = [],
-): NodeInterface
+    null|array $attributes = [],
+): Body
 {
-    return new Element(
-        'body',
+    return new Body(
         $children,
         class: $class,
         style: $style,
@@ -91,15 +88,28 @@ function Body(
 }
 
 function Div(
-    null|string|array|NodeInterface $children = [],
+    mixed $children = [],
     null|string|array $class = [],
     null|string|array $style = [],
-    array $attributes = [],
-    string $onLongPress = '',
-): NodeInterface
+    null|array $attributes = [],
+): Node
 {
-    return new Element(
-        'div',
+    return new Div(
+        $children,
+        class: $class,
+        style: $style,
+        attributes: $attributes,
+    );
+}
+
+function Template(
+    mixed $children = [],
+    null|string|array $class = [],
+    null|string|array $style = [],
+    null|array $attributes = [],
+): Node
+{
+    return new Template(
         $children,
         class: $class,
         style: $style,
@@ -108,36 +118,19 @@ function Div(
 }
 
 /**
- * @param null|array<NodeInterface>|NodeInterface $children
+ * @param null|array<Node>|Node $children
  * @param null|string|array $class
  * @param null|string|array $style
  * @param array $attributes
  */
 function Span(
-    null|string|array|NodeInterface $children = [],
+    mixed $children = [],
     null|string|array $class = [],
     null|string|array $style = [],
-    array $attributes = [],
-): NodeInterface
+    null|array $attributes = [],
+): Node
 {
-    return new Element(
-        'span',
-        $children,
-        class: $class,
-        style: $style,
-        attributes: $attributes,
-    );
-}
-
-function H1(
-    null|string|array|NodeInterface $children = [],
-    null|string|array $class = [],
-    null|string|array $style = [],
-    array $attributes = [],
-): NodeInterface
-{
-    return new Element(
-        'h1',
+    return new Span(
         $children,
         class: $class,
         style: $style,
