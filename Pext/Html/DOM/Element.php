@@ -6,37 +6,81 @@ use Pext\Html\Tags\Text;
 
 class Element extends Node
 {
-    public string $tag = '';
+    var string $tag = 'html';
+    var bool $singleton = false;
 
     public function __construct(
         protected mixed $children = [],
-        protected null|string|array $class = [],
-        protected null|string|array $style = [],
         protected null|array $attributes = [],
+    ) {}
 
-        protected null|array $on = [],
-    ) {
-        $this->on ??= [];
-        $this->children ??= [];
-        $this->attributes ??= [];
-
-        foreach ($this->on as $name => $value) {
-            $this->setEventToAttribute($name, $value);
-        }
-    }
-
-    public function setTag(string $tag): static
+    public function setTag(string $tag): self
     {
         $this->tag = $tag;
         return $this;
     }
 
-    function setEventToAttribute(string $event, string $attribute): void
+    protected function setDefaultValues(): void
     {
-        $this->attributes['@'.$event] = $attribute;
+        $this->attributes ??= [];
     }
 
-    private function childToNode(mixed $child): Node {
+    public function setClass(string|array $value): self
+    {
+        $this->attributes['class'] = $this->classToString($value);
+
+        return $this;
+    }
+
+    public function setStyle(string|array $value): self
+    {
+        $this->attributes['style'] = $this->styleToString($value);
+
+        return $this;
+    }
+
+    private function childrenToArray(): void
+    {
+        if (!is_array($this->children)) {
+            $this->children = [$this->children];
+        }
+    }
+
+    public function append(mixed $child): self
+    {
+        $this->childrenToArray();
+        $this->children[] = $child;
+        return $this;
+    }
+
+    public function prepend(mixed $child): self
+    {
+        $this->childrenToArray();
+        array_unshift($this->children, $child);
+        return $this;
+    }
+
+    public function setAttribute(string $name, mixed $value): self
+    {
+        if (is_object($value)) {
+            $value = json_encode($value, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT);
+        }
+
+        $this->attributes[$name] = $value;
+
+        return $this;
+    }
+
+    public function setAttributes(array $attributes): self
+    {
+        foreach ($attributes as $name => $value) {
+            $this->setAttribute($name, $value);
+        }
+
+        return $this;
+    }
+
+    protected function childToNode(mixed $child): Node {
         if (is_null($child)) {
             return new Node();
         }
@@ -49,16 +93,14 @@ class Element extends Node
             return new Text($child ? 'true' : 'false');
         }
 
-        if (    is_string($child)
-            OR  is_numeric($child)
-        ) {
+        if (is_string($child) OR is_numeric($child)) {
             return new Text((string) $child);
         }
 
         return new Node();
     }
 
-    private function classToString(string|array|null $data = null): string {
+    protected function classToString(string|array|null $data = null): string {
         if (is_null($data)) {
             return '';
         }
@@ -70,7 +112,7 @@ class Element extends Node
         return '';
     }
 
-    private function styleToString(string|array|null $data = null): string {
+    protected function styleToString(string|array|null $data = null): string {
         if (is_null($data)) {
             return '';
         }
@@ -91,7 +133,9 @@ class Element extends Node
         return implode('', array_map($callback, $data, array_keys($data)));
     }
 
-    private function attributesToString(string|array|null $data = null): string {
+    protected function attributesToString(): string {
+        $data = $this->attributes;
+
         if (is_null($data)) {
             return '';
         }
@@ -100,21 +144,33 @@ class Element extends Node
             return '';
         }
 
+        $data = array_filter($data);
+
         if (array_is_list($data)) {
-            $attrs = $this->attributes;
-        } else {
-            $keys = array_keys($data);
-            $callback = function($value, $key) {
-                $value = htmlspecialchars($value);
-                return "$key=\"$value\"";
-            };
-            $attrs = array_map($callback, $data, $keys);
+            return join(' ', $data);
         }
+
+        $keys  = array_keys($data);
+        $attrs = array_map([$this, 'attributeToString'], $data, $keys);
 
         return join(' ', $attrs);
     }
 
-    private function getChildren(): array {
+    protected function attributeToString(string $key, mixed $value): string {
+        if (is_null($value)) {
+            return '';
+        }
+
+        if (is_bool($value)) {
+            return $value ? $key : '';
+        }
+
+        $value = (string) $value;
+        $value = htmlspecialchars($value);
+        return "$key=\"$value\"";
+    }
+
+    protected function getChildren(): array {
         if (is_a($this->children, Node::class)) {
             return [$this->children];
         } elseif (is_array($this->children)) {
@@ -135,23 +191,19 @@ class Element extends Node
 
     public function __toString(): string
     {
-        $children = $this->getChildren();
-        $children = implode('', $children);
+        $this->setDefaultValues();
 
-        $attributes = $this->attributes ?? [];
-        $attributes['class'] = join(' ', array_filter([
-            $this->classToString($this->class),
-            $this->classToString($attributes['class'] ?? null),
-        ]));
-        $attributes['style'] = join('', [
-            $this->styleToString($this->style),
-            $this->styleToString($attributes['style'] ?? null),
-        ]);
-        $attributes = array_filter($attributes);
-        $attributes = $this->attributesToString($attributes);
+        $attributes = $this->attributesToString();
 
         $innerTag = [$this->tag, $attributes];
         $innerTag = implode(' ', array_filter($innerTag));
+
+        if ($this->singleton === true) {
+            return "<$innerTag />";
+        }
+
+        $children = $this->getChildren();
+        $children = implode('', $children);
 
         return "<$innerTag>$children</$this->tag>";
     }

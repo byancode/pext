@@ -2,9 +2,9 @@
 
 namespace Pext\Html\Tags;
 
-use Pext\Html\DOM\Element;
+use Pext\Html\DOM\ElementAlpine;
 
-class Body extends Element
+class Body extends ElementAlpine
 {
     public string $tag = 'body';
 }

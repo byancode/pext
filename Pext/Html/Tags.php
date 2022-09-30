@@ -1,6 +1,5 @@
 <?php
 
-use Pext\Html\DOM\Element;
 use Pext\Html\DOM\Node;
 use Pext\Html\Tags\Body;
 use Pext\Html\Tags\Div;
@@ -11,26 +10,6 @@ use Pext\Html\Tags\Template;
 use Pext\Html\Tags\Text;
 use Pext\Html\Tags\Title;
 
-function Element(
-    string $tag,
-    mixed $children = [],
-    null|string|array $class = [],
-    null|string|array $style = [],
-    array $attributes = [],
-
-    null|array $on = [],
-): Node
-{
-    $node = new Element(
-        $children,
-        class: $class,
-        style: $style,
-        attributes: $attributes,
-
-        on: $on,
-    );
-    return $node->setTag($tag);
-}
 
 function Text(string $string): Node
 {
@@ -82,7 +61,6 @@ function Body(
     null|string|array $class = [],
     null|string|array $style = [],
     null|array $attributes = [],
-
     null|array $on = [],
 ): Body
 {
@@ -91,7 +69,6 @@ function Body(
         class: $class,
         style: $style,
         attributes: $attributes,
-
         on: $on,
     );
 }
@@ -101,7 +78,6 @@ function Div(
     null|string|array $class = [],
     null|string|array $style = [],
     null|array $attributes = [],
-
     null|array $on = [],
 ): Div
 {
@@ -110,7 +86,6 @@ function Div(
         class: $class,
         style: $style,
         attributes: $attributes,
-
         on: $on,
     );
 }
@@ -120,6 +95,9 @@ function Template(
     null|string|array $class = [],
     null|string|array $style = [],
     null|array $attributes = [],
+    null|string $for = null,
+    null|string $key = null,
+    null|string $id = null,
 ): Template
 {
     return new Template(
@@ -144,7 +122,6 @@ function Span(
         class: $class,
         style: $style,
         attributes: $attributes,
-
         on: $on,
     );
 }

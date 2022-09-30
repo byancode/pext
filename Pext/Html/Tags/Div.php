@@ -2,9 +2,9 @@
 
 namespace Pext\Html\Tags;
 
-use Pext\Html\DOM\Element;
+use Pext\Html\DOM\ElementListener;
 
-class Div extends Element
+class Div extends ElementListener
 {
     public string $tag = 'div';
 }
