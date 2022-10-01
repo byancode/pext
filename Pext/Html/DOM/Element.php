@@ -17,6 +17,7 @@ class Element extends Node
     public function setTag(string $tag): self
     {
         $this->tag = $tag;
+
         return $this;
     }
 
@@ -25,16 +26,185 @@ class Element extends Node
         $this->attributes ??= [];
     }
 
-    public function setClass(string|array $value): self
+    public function setClass(null|string|array $value): self
     {
-        $this->attributes['class'] = $this->classToString($value);
+        $value ??= $this->getAttribute('class');
 
-        return $this;
+        if (is_null($value)) {
+            return $this;
+        }
+
+        $value = $this->classToString($value);
+
+        return $this->setAttribute('class', $value);
     }
 
-    public function setStyle(string|array $value): self
+    public function setStyle(null|string|array $value): self
     {
-        $this->attributes['style'] = $this->styleToString($value);
+        $value ??= $this->getAttribute('style');
+
+        if (is_null($value)) {
+            return $this;
+        }
+
+        $value = $this->styleToString($value);
+
+        return $this->setAttribute('style', $value);
+    }
+
+    public function setEventAttributes(
+        ?string $onafterprint = null,
+        ?string $onbeforeprint = null,
+        ?string $onbeforeunload = null,
+        ?string $onerror = null,
+        ?string $onhashchange = null,
+        ?string $onload = null,
+        ?string $onmessage = null,
+        ?string $onoffline = null,
+        ?string $ononline = null,
+        ?string $onpagehide = null,
+        ?string $onpageshow = null,
+        ?string $onpopstate = null,
+        ?string $onresize = null,
+        ?string $onstorage = null,
+        ?string $onunload = null,
+        // Form Events
+        ?string $onblur = null,
+        ?string $onchange = null,
+        ?string $oncontextmenu = null,
+        ?string $onfocus = null,
+        ?string $oninput = null,
+        ?string $oninvalid = null,
+        ?string $onreset = null,
+        ?string $onsearch = null,
+        ?string $onselect = null,
+        ?string $onsubmit = null,
+        // Keyboard Events
+        ?string $onclick = null,
+        ?string $ondblclick = null,
+        ?string $onmousedown = null,
+        ?string $onmousemove = null,
+        ?string $onmouseout = null,
+        ?string $onmouseover = null,
+        ?string $onmouseup = null,
+        ?string $onmousewheel = null,
+        ?string $onwheel = null,
+        // Drag and drop events
+        ?string $ondrag = null,
+        ?string $ondragend = null,
+        ?string $ondragenter = null,
+        ?string $ondragleave = null,
+        ?string $ondragover = null,
+        ?string $ondragstart = null,
+        ?string $ondrop = null,
+        ?string $onscroll = null,
+        // Clipboard Events
+        ?string $oncopy = null,
+        ?string $oncut = null,
+        ?string $onpaste = null,
+        ?string $onkeydown = null,
+        ?string $onkeypress = null,
+        ?string $onkeyup = null,
+        // Media Events
+        ?string $onabort = null,
+        ?string $oncanplay = null,
+        ?string $oncanplaythrough = null,
+        ?string $oncuechange = null,
+        ?string $ondurationchange = null,
+        ?string $onemptied = null,
+        ?string $onended = null,
+        ?string $onloadeddata = null,
+        ?string $onloadedmetadata = null,
+        ?string $onloadstart = null,
+        ?string $onpause = null,
+        ?string $onplay = null,
+        ?string $onplaying = null,
+        ?string $onprogress = null,
+        ?string $onratechange = null,
+        ?string $onseeked = null,
+        ?string $onseeking = null,
+        ?string $onstalled = null,
+        ?string $onsuspend = null,
+        ?string $ontimeupdate = null,
+        ?string $onvolumechange = null,
+        ?string $onwaiting = null,
+    ): self
+    {
+        foreach ([
+            'onafterprint',
+            'onbeforeprint',
+            'onbeforeunload',
+            'onerror',
+            'onhashchange',
+            'onload',
+            'onmessage',
+            'onoffline',
+            'ononline',
+            'onpagehide',
+            'onpageshow',
+            'onpopstate',
+            'onresize',
+            'onstorage',
+            'onunload',
+            'onblur',
+            'onchange',
+            'oncontextmenu',
+            'onfocus',
+            'oninput',
+            'oninvalid',
+            'onreset',
+            'onsearch',
+            'onselect',
+            'onsubmit',
+            'onclick',
+            'ondblclick',
+            'onmousedown',
+            'onmousemove',
+            'onmouseout',
+            'onmouseover',
+            'onmouseup',
+            'onmousewheel',
+            'onwheel',
+            'ondrag',
+            'ondragend',
+            'ondragenter',
+            'ondragleave',
+            'ondragover',
+            'ondragstart',
+            'ondrop',
+            'onscroll',
+            'oncopy',
+            'oncut',
+            'onpaste',
+            'onkeydown',
+            'onkeypress',
+            'onkeyup',
+            'onabort',
+            'oncanplay',
+            'oncanplaythrough',
+            'oncuechange',
+            'ondurationchange',
+            'onemptied',
+            'onended',
+            'onloadeddata',
+            'onloadedmetadata',
+            'onloadstart',
+            'onpause',
+            'onplay',
+            'onplaying',
+            'onprogress',
+            'onratechange',
+            'onseeked',
+            'onseeking',
+            'onstalled',
+            'onsuspend',
+            'ontimeupdate',
+            'onvolumechange',
+            'onwaiting',
+        ] as $event) {
+            $$event ??= $this->getAttribute($event);
+            $this->setAttribute($event, $$event);
+        }
 
         return $this;
     }
@@ -62,6 +232,18 @@ class Element extends Node
 
     public function setAttribute(string $name, mixed $value): self
     {
+        if (is_null($value)) {
+            return $this;
+        }
+
+        if (is_string($value) && $value === '') {
+            return $this;
+        }
+
+        if (is_array($value) && count($value) === 0) {
+            return $this;
+        }
+
         if (is_object($value)) {
             $value = json_encode($value, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT);
         }
@@ -71,10 +253,42 @@ class Element extends Node
         return $this;
     }
 
+    public function getAttribute(string $name): mixed
+    {
+        return $this->attributes[$name] ?? null;
+    }
+
+    protected function removeAttribute(string $name): void
+    {
+        unset($this->attributes[$name]);
+    }
+
+    protected function removeAttributes(string ...$names): void
+    {
+        foreach ($names as $name) {
+            unset($this->attributes[$name]);
+        }
+    }
+
     public function setAttributes(array $attributes): self
     {
         foreach ($attributes as $name => $value) {
             $this->setAttribute($name, $value);
+        }
+
+        return $this;
+    }
+
+    public function setEvent(string $name, string $value): self
+    {
+        $this->setAttribute("on$name", $value);
+        return $this;
+    }
+
+    public function setEvents(array $events): self
+    {
+        foreach ($events as $name => $value) {
+            $this->setEvent($name, $value);
         }
 
         return $this;

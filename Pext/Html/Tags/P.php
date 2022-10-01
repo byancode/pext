@@ -2,9 +2,7 @@
 
 namespace Pext\Html\Tags;
 
-use Pext\Html\DOM\Element;
-
-class P extends Element
+class P extends Div
 {
     public string $tag = 'p';
 }

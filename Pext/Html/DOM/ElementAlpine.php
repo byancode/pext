@@ -4,9 +4,192 @@ namespace Pext\Html\DOM;
 
 class ElementAlpine extends Element
 {
+    public function setAlpineEvent(string $name, string $value): self
+    {
+        return $this->setAttribute("@$name", $value);
+    }
+
+    public function setAlpineEvents(null|array $events): self
+    {
+        $events ??= $this->getAttribute('x-on');
+        $events ??= $this->getAttribute('on');
+        $this->removeAttributes('x-on', 'on');
+
+        if (is_null($events)) {
+            return $this;
+        }
+
+        foreach ($events as $name => $value) {
+            $this->setEvent($name, $value);
+        }
+
+        return $this;
+    }
+
+
+    public function setAlpineEventAttributes(
+        ?string $onafterprint = null,
+        ?string $onbeforeprint = null,
+        ?string $onbeforeunload = null,
+        ?string $onerror = null,
+        ?string $onhashchange = null,
+        ?string $onload = null,
+        ?string $onmessage = null,
+        ?string $onoffline = null,
+        ?string $ononline = null,
+        ?string $onpagehide = null,
+        ?string $onpageshow = null,
+        ?string $onpopstate = null,
+        ?string $onresize = null,
+        ?string $onstorage = null,
+        ?string $onunload = null,
+        // Form Events
+        ?string $onblur = null,
+        ?string $onchange = null,
+        ?string $oncontextmenu = null,
+        ?string $onfocus = null,
+        ?string $oninput = null,
+        ?string $oninvalid = null,
+        ?string $onreset = null,
+        ?string $onsearch = null,
+        ?string $onselect = null,
+        ?string $onsubmit = null,
+        // Keyboard Events
+        ?string $onclick = null,
+        ?string $ondblclick = null,
+        ?string $onmousedown = null,
+        ?string $onmousemove = null,
+        ?string $onmouseout = null,
+        ?string $onmouseover = null,
+        ?string $onmouseup = null,
+        ?string $onmousewheel = null,
+        ?string $onwheel = null,
+        // Drag and drop events
+        ?string $ondrag = null,
+        ?string $ondragend = null,
+        ?string $ondragenter = null,
+        ?string $ondragleave = null,
+        ?string $ondragover = null,
+        ?string $ondragstart = null,
+        ?string $ondrop = null,
+        ?string $onscroll = null,
+        // Clipboard Events
+        ?string $oncopy = null,
+        ?string $oncut = null,
+        ?string $onpaste = null,
+        ?string $onkeydown = null,
+        ?string $onkeypress = null,
+        ?string $onkeyup = null,
+        // Media Events
+        ?string $onabort = null,
+        ?string $oncanplay = null,
+        ?string $oncanplaythrough = null,
+        ?string $oncuechange = null,
+        ?string $ondurationchange = null,
+        ?string $onemptied = null,
+        ?string $onended = null,
+        ?string $onloadeddata = null,
+        ?string $onloadedmetadata = null,
+        ?string $onloadstart = null,
+        ?string $onpause = null,
+        ?string $onplay = null,
+        ?string $onplaying = null,
+        ?string $onprogress = null,
+        ?string $onratechange = null,
+        ?string $onseeked = null,
+        ?string $onseeking = null,
+        ?string $onstalled = null,
+        ?string $onsuspend = null,
+        ?string $ontimeupdate = null,
+        ?string $onvolumechange = null,
+        ?string $onwaiting = null,
+    ): self
+    {
+        foreach ([
+            'afterprint',
+            'beforeprint',
+            'beforeunload',
+            'error',
+            'hashchange',
+            'load',
+            'message',
+            'offline',
+            'online',
+            'pagehide',
+            'pageshow',
+            'popstate',
+            'resize',
+            'storage',
+            'unload',
+            'blur',
+            'change',
+            'contextmenu',
+            'focus',
+            'input',
+            'invalid',
+            'reset',
+            'search',
+            'select',
+            'submit',
+            'click',
+            'dblclick',
+            'mousedown',
+            'mousemove',
+            'mouseout',
+            'mouseover',
+            'mouseup',
+            'mousewheel',
+            'wheel',
+            'drag',
+            'dragend',
+            'dragenter',
+            'dragleave',
+            'dragover',
+            'dragstart',
+            'drop',
+            'scroll',
+            'copy',
+            'cut',
+            'paste',
+            'keydown',
+            'keypress',
+            'keyup',
+            'abort',
+            'canplay',
+            'canplaythrough',
+            'cuechange',
+            'durationchange',
+            'emptied',
+            'ended',
+            'loadeddata',
+            'loadedmetadata',
+            'loadstart',
+            'pause',
+            'play',
+            'playing',
+            'progress',
+            'ratechange',
+            'seeked',
+            'seeking',
+            'stalled',
+            'suspend',
+            'timeupdate',
+            'volumechange',
+            'waiting',
+        ] as $event) {
+            $keyEvent = "on$event";
+            $value = $$keyEvent ?? $this->getAttribute("@$event");
+            $this->setAlpineEvent($event, $value);
+        }
+
+        return $this;
+    }
+
     public function setAlpineDirectives(
         null|string|array $data = [],
         null|array $bind = [],
+        null|array $on = [],
+
         null|string $modelable = null,
         null|string $effect = null,
         null|bool $ignore = null,
@@ -22,6 +205,7 @@ class ElementAlpine extends Element
     ): self
     {
         $this->setAlpineBindings($bind);
+        $this->setAlpineEvents($on);
         $this->setAlpineData($data);
 
         foreach([
@@ -38,9 +222,35 @@ class ElementAlpine extends Element
             'ref',
             'id',
         ] as $attribute) {
+            $$attribute ??= $this->getAttribute("x-$attribute");
+
             if (is_null($$attribute)) {
                 continue;
             }
+
+            $this->setAttribute("x-$attribute", $$attribute);
+        }
+
+        return $this;
+    }
+
+    public function setAlpineTemplateDirectives(
+        null|string $for = null,
+        null|string $key = null,
+        null|string $if = null,
+    ): self
+    {
+        foreach([
+            'for',
+            'key',
+            'if',
+        ] as $attribute) {
+            $$attribute ??= $this->getAttribute("x-$attribute");
+
+            if (is_null($$attribute)) {
+                continue;
+            }
+
             $this->setAttribute("x-$attribute", $$attribute);
         }
 
@@ -50,6 +260,11 @@ class ElementAlpine extends Element
     private function setAlpineTransitionAttribute(string $key, string|bool $value): void
     {
         $this->attributes["x-transition:$key"] = $value;
+    }
+
+    private function getAlpineTransitionAttribute(string $key): mixed
+    {
+        return $this->getAttribute("x-transition:$key");
     }
 
     public function setAlpineTransitionDirectives(
@@ -78,9 +293,12 @@ class ElementAlpine extends Element
             'transitionLeaveEnd'   => 'leave-end',
             'transitionLeave'      => 'leave',
         ] as $attribute => $value) {
+            $$attribute ??= $this->getAlpineTransitionAttribute($attribute);
+
             if (is_null($$attribute)) {
                 continue;
             }
+
             $this->setAlpineTransitionAttribute($value, $$attribute);
         }
 
@@ -104,6 +322,11 @@ class ElementAlpine extends Element
     private function setAlpineIntersectAttribute(string $key, string $value): void
     {
         $this->setAttribute("x-intersect:$key", $value);
+    }
+
+    private function getAlpineIntersectAttribute(string $key): mixed
+    {
+        return $this->getAttribute("x-intersect:$key");
     }
 
     public function setAlpineIntersectDirectives(
@@ -133,9 +356,12 @@ class ElementAlpine extends Element
                 'intersectEnter' => 'enter',
                 'intersectLeave' => 'leave',
             ] as $attribute => $value) {
+                $$attribute ??= $this->getAlpineIntersectAttribute($value);
+
                 if (is_null($$attribute)) {
                     continue;
                 }
+
                 $this->setAlpineIntersectAttribute($value, $$attribute);
             }
         }
@@ -145,12 +371,15 @@ class ElementAlpine extends Element
 
     public function setAlpineBindAttribute(string $key, mixed $value): self
     {
-        $this->setAttribute("x-bind:$key", $value);
-        return $this;
+        return $this->setAttribute("x-bind:$key", $value);
     }
 
     public function setAlpineBindings($value): self
     {
+        $value ??= $this->getAttribute('x-bind');
+        $value ??= $this->getAttribute('bind');
+        $this->removeAttributes('x-bind', 'bind');
+
         if (!is_array($value)) {
             return $this;
         }
@@ -164,6 +393,10 @@ class ElementAlpine extends Element
 
     public function setAlpineData($value): self
     {
+        $value ??= $this->getAttribute('x-data');
+        $value ??= $this->getAttribute('data');
+        $this->removeAttribute('data');
+
         if (is_null($value)) {
             return $this;
         }
@@ -175,9 +408,7 @@ class ElementAlpine extends Element
             );
         }
 
-        $this->setAttribute('x-data', $value);
-
-        return $this;
+        return $this->setAttribute('x-data', $value);
     }
 
     public function __toString(): string
