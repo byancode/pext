@@ -1,0 +1,13 @@
+{
+    "require": {
+        "symfony/process": "^6.1"
+    },
+    "autoload": {
+        "files": [
+            "src/Html/helpers.php"
+        ],
+        "psr-4": {
+            "Pext\\": "src/"
+        }
+    }
+}

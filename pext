@@ -1,16 +1,12 @@
 #!/usr/bin/env php
 <?php
 
-spl_autoload_register(function($name) {
-    include_once __DIR__ . '/' . str_replace('\\', '/', $name) . '.php';
-});
+require_once __DIR__.'/vendor/autoload.php';
 
 function __(string $text): string
 {
     return $text;
 }
-
-include __DIR__ . '/Pext/Html/Tags.php';
 
 
 $server = new Swoole\Http\Server("127.0.0.1", 9501);
@@ -28,29 +24,38 @@ $server->on('Request', function(Swoole\Http\Request $request, Swoole\Http\Respon
     $response->end((string) Html(
         head: Head([
             Title('Byancode'),
+            Script(src: 'https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js', defer: true),
+            Script('function binance() { return { message: "Hello world" } }'),
         ]),
         body: Body(
-            attributes: [
-                '@click.self' => 'console.log("Hello World")'
-            ],
             children: Div(
-                class: 'container',
-                attributes: [
-                    'x-intersect' => __('Hello World'),
+                data: [
+                    'name' => 'bianca',
                 ],
+                class: 'container',
                 children: [
                     Text($request->server['request_uri'] ?? '/'),
                     Div([2,3,4], style: [
-                        'color'   => 'green',
-                        'padding' => '2rem'
+                        'color'     => 'currentColor',
+                        'padding'   => '3rem',
+                        'font-size' => '2rem',
                     ]),
-                    Div('Hello World 1'),
-                    Div('Hello World 2'),
+                    Div('Hello World 1', ondblclick: 'alert("Hello World 1")'),
+                    Div(
+                        text: '`Hola ${name}`',
+                        style: 'text-transform: capitalize',
+                        onclick: 'alert("Hello World 2")'
+                    ),
                     Div('Hello World 3'),
-                    Div('Hello World 4'),
+                    Input(
+                        type: 'text',
+                        model: 'name',
+                        oninput: 'console.log(name)',
+                    ),
+                    Div('Hello World 4', onclick: 'alert("Hello World 4")'),
                 ]
             ),
-            style: 'background-color: antiquewhite;',
+            style: 'background-color: #202124; color: #f2f2f2',
         ),
     ));
 });
