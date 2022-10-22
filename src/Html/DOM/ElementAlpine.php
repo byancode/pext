@@ -239,7 +239,7 @@ class ElementAlpine extends Element
         null|string $show = null,
         null|string $init = null,
         null|string $text = null,
-        null|string $html = null,
+        null|Node|string $html = null,
         null|string $ref = null,
         null|string $id = null,
     ): self
@@ -266,6 +266,11 @@ class ElementAlpine extends Element
 
             if (is_null($$attribute)) {
                 continue;
+            }
+
+            if ($attribute == 'html' && !is_string($$attribute)) {
+                $$attribute = str_replace('`', '\\`', (string) $$attribute);
+                $$attribute = "`{$$attribute}`";
             }
 
             $this->setAttribute("x-$attribute", $$attribute);

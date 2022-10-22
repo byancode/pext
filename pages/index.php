@@ -1,33 +1,26 @@
-#!/usr/bin/env php
 <?php
 
-require_once __DIR__.'/vendor/autoload.php';
+return new class extends Page {
 
-function __(string $text): string
-{
-    return $text;
-}
+    function init(Request $request) {
+        $request->header('Content-Type', 'text/html');
+    }
 
+    function binanceScript() {
+        return Script(type: 'text/javascript', content: '
+            function binance() {
+                return { message: "Hello world" }
+            }
+        ');
+    }
 
-$server = new Swoole\Http\Server("127.0.0.1", 9501);
-
-// Triggered when the HTTP Server starts, connections are accepted after this callback is executed
-$server->on("Start", function(Swoole\Http\Server $server)
-{
-    echo "Server started at http://127.0.0.1:9501" . PHP_EOL;
-});
-
-// The main HTTP server request callback event, entry point for all incoming HTTP requests
-$server->on('Request', function(Swoole\Http\Request $request, Swoole\Http\Response $response)
-{
-    $response->header("Content-Type", "text/html");
-    $response->end(
-        Html(
-            head: Head([
-                Title('Byancode'),
+    function build(Request $request) {
+        return Html(
+            title: 'Byancode',
+            head: [
                 Script(src: 'https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js', defer: true),
-                Script('function binance() { return { message: "Hello world" } }'),
-            ]),
+                $this->binanceScript(),
+            ],
             body: Body(
                 children: Div(
                     data: [
@@ -35,7 +28,7 @@ $server->on('Request', function(Swoole\Http\Request $request, Swoole\Http\Respon
                     ],
                     class: 'container',
                     children: [
-                        Text($request->server['request_uri'] ?? '/'),
+                        Text($request->server('request_uri', '/')),
                         Div(text: '`${name}`', style: [
                             'color'     => 'currentColor',
                             'padding'   => '3rem',
@@ -59,20 +52,6 @@ $server->on('Request', function(Swoole\Http\Request $request, Swoole\Http\Respon
                 ),
                 style: 'background-color: #202124; color: #f2f2f2',
             ),
-        )
-    );
-});
-
-// Triggered when the server is shutting down
-$server->on("Shutdown", function($server, $workerId)
-{
-    echo "Server is shutting down" . PHP_EOL;
-});
-
-// Triggered when worker processes are being stopped
-$server->on("WorkerStop", function($server, $workerId)
-{
-    echo "Worker $workerId is stopping" . PHP_EOL;
-});
-
-$server->start();
+        );
+    }
+};

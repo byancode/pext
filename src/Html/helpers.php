@@ -21,23 +21,18 @@ function Text(string $string): Node
 }
 
 function Html(
-    mixed $children = [],
-    ?Head $head = null,
-    ?Body $body = null,
+    null|Head|array $head = null,
+    ?Node $body = null,
     null|string|array $class = [],
     null|array $attributes = [],
+    ?string $title = null,
 ): Html
 {
-    $children ??= [];
-    if (is_null($head) === false) {
-        $children[] = $head;
-    }
-    if (is_null($body) === false) {
-        $children[] = $body;
-    }
     return new Html(
-        $children,
+        head: $head,
+        body: $body,
         class: $class,
+        title: $title,
         attributes: $attributes,
     );
 }
@@ -229,7 +224,7 @@ function Div(
     null|string $show = null,
     null|string $init = null,
     null|string $text = null,
-    null|string $html = null,
+    null|Node|string $html = null,
     null|string $ref = null,
     null|string $id = null,
 
@@ -385,7 +380,7 @@ function Span(
     null|string $show = null,
     null|string $init = null,
     null|string $text = null,
-    null|string $html = null,
+    null|Node|string $html = null,
     null|string $ref = null,
     null|string $id = null,
 
@@ -509,8 +504,10 @@ function Script(
     ?array $bind = [],
     ?array $on = [],
 
-    ?bool $defer = null,
+    ?string $type = null,
     ?string $src = null,
+
+    ?bool $defer = null,
     ?string $ref = null,
     ?string $id = null,
 
@@ -523,6 +520,7 @@ function Script(
         content: $content,
         attributes: $attributes,
         defer: $defer,
+        type: $type,
         src: $src,
         ref: $ref,
         id: $id,
@@ -558,7 +556,7 @@ function Form(
     null|string $show = null,
     null|string $init = null,
     null|string $text = null,
-    null|string $html = null,
+    null|Node|string $html = null,
     null|string $ref = null,
     null|string $id = null,
 
@@ -708,7 +706,7 @@ function Input(
     null|string $show = null,
     null|string $init = null,
     null|string $text = null,
-    null|string $html = null,
+    null|Node|string $html = null,
     null|string $ref = null,
     null|string $id = null,
 
@@ -874,7 +872,7 @@ function Button(
     null|string $show = null,
     null|string $init = null,
     null|string $text = null,
-    null|string $html = null,
+    null|Node|string $html = null,
     null|string $ref = null,
     null|string $id = null,
 

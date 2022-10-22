@@ -16,8 +16,10 @@ class Script extends ElementAlpine
         ?array $bind = [],
         ?array $on = [],
 
-        ?bool $defer = null,
+        ?string $type = null,
         ?string $src = null,
+
+        ?bool $defer = null,
         ?string $ref = null,
         ?string $id = null,
 
@@ -32,8 +34,11 @@ class Script extends ElementAlpine
             onload: $onload,
         );
 
-        $this->setAttribute('defer', $defer);
-        $this->setAttribute('src', $src);
+        $this->setAttributes([
+            'defer'=> $defer,
+            'type' => $type,
+            'src'  => $src,
+        ]);
         $this->setElementAlpineEvents($on);
 
         $this->setElementAlpineDirectives(

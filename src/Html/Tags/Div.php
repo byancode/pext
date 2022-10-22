@@ -3,6 +3,7 @@
 namespace Pext\Html\Tags;
 
 use Pext\Html\DOM\ElementAlpine;
+use Pext\Html\DOM\Node;
 
 class Div extends ElementAlpine
 {
@@ -28,7 +29,7 @@ class Div extends ElementAlpine
         null|string $show = null,
         null|string $init = null,
         null|string $text = null,
-        null|string $html = null,
+        null|Node|string $html = null,
         null|string $ref = null,
         null|string $id = null,
 

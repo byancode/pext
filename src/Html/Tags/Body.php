@@ -28,7 +28,7 @@ class Body extends ElementAlpine
         null|string $show = null,
         null|string $init = null,
         null|string $text = null,
-        null|string $html = null,
+        null|string|Node $html = null,
         null|string $ref = null,
         null|string $id = null,
 

@@ -11,14 +11,14 @@ class Component implements ComponentInterface {
         return new Node();
     }
 
-    public function controller(Request $request) {
+    public function state(Request $request) {
         return [];
     }
 
     public function __toString(): string {
         $request = new Request();
-        $response = $this->controller($request);
-        $child = $this->render($response);
+        $state = $this->state($request);
+        $child = $this->render($state);
         return (string) $child;
     }
 }
