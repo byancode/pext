@@ -7,6 +7,7 @@ namespace Composer\Autoload;
 class ComposerStaticInit76783138c9e2d25c3cb23a2de158bf5d
 {
     public static $files = array (
+        '60799491728b879e74601d83e38b2cad' => __DIR__ . '/..' . '/illuminate/collections/helpers.php',
         'a3c64895caa4f35842596edef055247c' => __DIR__ . '/../..' . '/src/Html/helpers.php',
     );
 
@@ -17,7 +18,14 @@ class ComposerStaticInit76783138c9e2d25c3cb23a2de158bf5d
         ),
         'P' => 
         array (
+            'Psr\\SimpleCache\\' => 16,
+            'Psr\\Container\\' => 14,
             'Pext\\' => 5,
+        ),
+        'I' => 
+        array (
+            'Illuminate\\Support\\' => 19,
+            'Illuminate\\Contracts\\' => 21,
         ),
     );
 
@@ -26,9 +34,27 @@ class ComposerStaticInit76783138c9e2d25c3cb23a2de158bf5d
         array (
             0 => __DIR__ . '/..' . '/symfony/process',
         ),
+        'Psr\\SimpleCache\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/psr/simple-cache/src',
+        ),
+        'Psr\\Container\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/psr/container/src',
+        ),
         'Pext\\' => 
         array (
             0 => __DIR__ . '/../..' . '/src',
+        ),
+        'Illuminate\\Support\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/illuminate/macroable',
+            1 => __DIR__ . '/..' . '/illuminate/conditionable',
+            2 => __DIR__ . '/..' . '/illuminate/collections',
+        ),
+        'Illuminate\\Contracts\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/illuminate/contracts',
         ),
     );
 

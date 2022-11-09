@@ -1,9 +1,17 @@
 <?php
 
+use Pext\Components\Example;
+use Pext\Engine\Page;
+use Pext\Engine\Result;
+use Pext\Html\DOM\Node;
+use Swoole\Http\Request;
+
 return new class extends Page {
 
-    function init(Request $request) {
-        $request->header('Content-Type', 'text/html');
+    function match(Request $request): bool {
+        return $request->check([
+            'user' => 'required|int',
+        ]);
     }
 
     function binanceScript() {
@@ -14,7 +22,11 @@ return new class extends Page {
         ');
     }
 
-    function build(Request $request) {
+    function controller(Request $request) {
+        return [];
+    }
+
+    function render(Result $result): Node {
         return Html(
             title: 'Byancode',
             head: [
@@ -28,7 +40,7 @@ return new class extends Page {
                     ],
                     class: 'container',
                     children: [
-                        Text($request->server('request_uri', '/')),
+                        Text($this->request->server['request_uri'] ?? '/'),
                         Div(text: '`${name}`', style: [
                             'color'     => 'currentColor',
                             'padding'   => '3rem',
@@ -38,7 +50,7 @@ return new class extends Page {
                         Div(
                             text: '`Hola ${name}`',
                             style: 'text-transform: capitalize',
-                            onclick: 'alert("Hello World 2")'
+                            onclick: 'alert("Hello sWorld 2")'
                         ),
                         Div('Hello World 3'),
                         Input(
@@ -48,6 +60,7 @@ return new class extends Page {
                         ),
                         Div('Hello World 4', onclick: 'alert(binance().message)'),
                         Div(html: div('Hello World 5')),
+                        new Example(initial: ['name' => 'Bianca']),
                     ]
                 ),
                 style: 'background-color: #202124; color: #f2f2f2',

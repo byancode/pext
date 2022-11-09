@@ -3,6 +3,7 @@
 namespace Pext\Html\Tags;
 
 use Pext\Html\DOM\Element;
+use Pext\Html\DOM\Node;
 
 class Html extends Element
 {
@@ -16,8 +17,6 @@ class Html extends Element
         null|string|array $class = [],
         ?string $title = null,
     ) {
-        $this->children ??= [];
-
         if (isset($head)) {
             if (is_array($head)) {
                 $head = new Head($head);
@@ -30,7 +29,7 @@ class Html extends Element
         }
 
         if (isset($body)) {
-            $children[] = $body;
+            $this->children[] = $body;
         }
 
         $this->setClass($class);

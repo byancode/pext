@@ -1,13 +1,22 @@
-# PEXT
+# PEXT (in delopment)
 this is a Next Generation of the PHP framework
 
-## structure
+## structure files
 ```
 - api
-- pages
+- views
+    - components
+    - layouts
+    - pages
+- application
+    - lang
+    - models
+    - entities
+    - services
+    - repositories
+    - middlewares
+- tests
 - public
 - config
-- engine
 - storage
-- components
 ```

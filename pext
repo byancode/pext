@@ -3,64 +3,73 @@
 
 require_once __DIR__.'/vendor/autoload.php';
 
+use Swoole\Http\Server;
+use Swoole\Http\Request;
+use Pext\Engine\Context;
+use Swoole\Http\Response;
+
 function __(string $text): string
 {
     return $text;
 }
 
 
-$server = new Swoole\Http\Server("127.0.0.1", 9501);
+function find_files(string $name): array
+{
+    $path = __DIR__ . DIRECTORY_SEPARATOR . $name;
+    $directory = new RecursiveDirectoryIterator($path);
+    $filter    = new RecursiveFilterIteratorCustom($directory);
+    $iterator  = new RecursiveIteratorIterator($filter);
+
+    return array_map(function ($fileInfo) {
+        return $fileInfo->getPathname();
+    }, iterator_to_array($iterator));
+}
+
+class RecursiveFilterIteratorCustom extends RecursiveFilterIterator
+{
+    public function accept(): bool
+    {
+        if ($this->current()->isDir()) {
+            return !in_array($this->current()->getFilename(), ['.git', 'vendor', '.', '..', '.phan']);
+        }
+
+        return preg_match('/\.php$/', $this->current()->getFilename()) !== false;
+    }
+}
+
+
+$server = new Server("127.0.0.1", 9501);
 
 // Triggered when the HTTP Server starts, connections are accepted after this callback is executed
-$server->on("Start", function(Swoole\Http\Server $server)
+$server->on("Start", function(Server $server)
 {
     echo "Server started at http://127.0.0.1:9501" . PHP_EOL;
 });
 
 // The main HTTP server request callback event, entry point for all incoming HTTP requests
-$server->on('Request', function(Swoole\Http\Request $request, Swoole\Http\Response $response)
-{
-    $response->header("Content-Type", "text/html");
-    $response->end(
-        Html(
-            head: Head([
-                Title('Byancode'),
-                Script(src: 'https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js', defer: true),
-                Script('function binance() { return { message: "Hello world" } }'),
-            ]),
-            body: Body(
-                children: Div(
-                    data: [
-                        'name' => 'bianca',
-                    ],
-                    class: 'container',
-                    children: [
-                        Text($request->server['request_uri'] ?? '/'),
-                        Div(text: '`${name}`', style: [
-                            'color'     => 'currentColor',
-                            'padding'   => '3rem',
-                            'font-size' => '2rem',
-                        ]),
-                        Div('Hello World 1', ondblclick: 'alert("Hello World 1")'),
-                        Div(
-                            text: '`Hola ${name}`',
-                            style: 'text-transform: capitalize',
-                            onclick: 'alert("Hello World 2")'
-                        ),
-                        Div('Hello World 3'),
-                        Input(
-                            type: 'text',
-                            model: 'name',
-                            oninput: 'console.log(name)',
-                        ),
-                        Div('Hello World 4', onclick: 'alert(binance().message)'),
-                        Div(html: div('Hello World 5')),
-                    ]
-                ),
-                style: 'background-color: #202124; color: #f2f2f2',
-            ),
-        )
+$server->on('Request', function(
+    Request $request,
+    Response $response,
+) {
+    $pages   = find_files('pages');
+    $context = new Context(
+        $request, $response,
     );
+
+    foreach ($pages as $file) {
+        /** @var \Pext\Engine\Page */
+        $page = require $file;
+        $page->setContext($context);
+
+        if ($page->match($request)) {
+            $response->end($page);
+            return;
+        }
+    }
+
+    $response->status(404);
+    $response->end();
 });
 
 // Triggered when the server is shutting down

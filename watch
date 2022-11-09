@@ -36,6 +36,11 @@ while (true) {
     }
 }
 
+function file_hash(string $pathname): string
+{
+    return md5(file_get_contents($pathname));
+}
+
 function php_files(): array
 {
     $directory = new RecursiveDirectoryIterator(__DIR__);
@@ -45,11 +50,6 @@ function php_files(): array
     return array_map(function ($fileInfo) {
         return $fileInfo->getPathname();
     }, iterator_to_array($iterator));
-}
-
-function file_hash(string $pathname): string
-{
-    return md5(file_get_contents($pathname));
 }
 
 class Filter extends RecursiveFilterIterator
